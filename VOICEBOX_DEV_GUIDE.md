@@ -31,7 +31,18 @@ just dev-backend     # API only
 just dev-frontend    # Tauri only (backend must be running)
 just kill            # stop dev processes
 just test-models --only kokoro   # smoke-test Kokoro engine
+just test            # includes test_whisper_stt_chunks.py
 ```
+
+### Fork feature: long-form Whisper transcription
+
+Upstream Whisper (PyTorch) only processes ~30 seconds per forward pass. This fork adds `backend/utils/whisper_stt.py`, which:
+
+- Splits longer audio into **30 s windows** with **5 s overlap**
+- Transcribes each chunk and joins the text
+- Applies to **Captures**, **POST /transcribe**, and **dictation** on Windows/CUDA/Linux PyTorch backends
+
+Run chunking tests: `backend\venv\Scripts\python.exe -m pytest backend/tests/test_whisper_stt_chunks.py -v`
 
 ---
 
